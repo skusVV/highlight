@@ -3,9 +3,46 @@ import './tag-field.css';
 
 const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
 
+const colors = [
+    '#51ba4c',
+    '#e4a8b6',
+    '#b5faba',
+    '#ee0ab4',
+    '#908410',
+    '#31f973',
+    '#c0751e',
+    '#db5851',
+    '#d971ff',
+    '#fd0674',
+    '#c1fb04',
+    '#fb055f',
+    '#de7203',
+    '#ce540d',
+    '#a9c970',
+    '#c8511a',
+    '#4b8973',
+    '#e86b5d',
+    '#14bc88',
+    '#c20074',
+    '#d78c00',
+    '#58a658',
+    '#7fd47d',
+    '#f96642',
+    '#10dc81',
+    '#61f9de',
+    '#d1747e',
+    '#de3348',
+    '#e0c41d',
+    '#a4fdfb',
+    '#1f60e9',
+    '#3ad49e'
+];
+
+
+
 const TagField = () => {
     const [keywords, setKeywords] = useState([]);
-    const [color, setColor] = useState('#ffdd00');
+    const [color, setColor] = useState(colors[Math.floor(Math.random()*colors.length)]);
     const [value, setValue] = useState('');
 
     useEffect(() => {
@@ -40,9 +77,16 @@ const TagField = () => {
 
     const onSave = () => {
         if(value) {
+            const alreadyExists = keywords.some(item => item.value === value);
+            if(alreadyExists) {
+                setValue('');
+                return;
+            }
+
             const newKeywords = [{value: value.toLowerCase(), color: color}, ...keywords];
             saveKeywords(newKeywords);
             setValue('');
+            setColor(colors[Math.floor(Math.random()*colors.length)]);
         }
     }
 
@@ -53,7 +97,7 @@ const TagField = () => {
     }
 
     const onRemove = (item) => {
-        const newKeywords = keywords.filter(keyword => keyword !== item);
+        const newKeywords = keywords.filter(keyword => keyword.value !== item.value);
         saveKeywords(newKeywords);
     }
 
@@ -76,7 +120,7 @@ const TagField = () => {
             <div className="tag-field-content">
                 {
                     keywords.map(item => {
-                        return <div key={item}
+                        return <div key={item.value}
                                     style={{background: item.color}}
                                     className="tag-field-content-item">
                             <div>{item.value}</div>

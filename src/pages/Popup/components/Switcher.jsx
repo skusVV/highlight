@@ -8,7 +8,8 @@ const Switcher = () => {
 
     useEffect(() => {
         const isSwitcherEnabled = localStorage.getItem(SAVED_IS_ENABLED_KEY);
-        if(isSwitcherEnabled) {
+
+        if(isSwitcherEnabled === 'true') {
             setIsEnabled(isSwitcherEnabled === 'true')
             if(chrome.storage) {
                 chrome.storage.local.set({ isEnabled:  String(true) }, function() {
