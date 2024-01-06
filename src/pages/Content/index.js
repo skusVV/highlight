@@ -38,9 +38,14 @@ const syncDataWithPopUp = () => {
 
     chrome?.storage?.local?.get(['clear'], function(result) {
         try {
-            console.log('CLEAR', result.clear.id)
-            delete data[result.clear.id];
-            console.log('DELETED data', data);
+            if(result.clear) {
+                const res = JSON.parse(result.clear);
+
+                if(res && res.id) {
+                    delete data[res.id];
+                }
+
+            }
         } catch (e) {}
     });
 }

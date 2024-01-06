@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Switcher from './components/Switcher';
 import './Popup.css';
 import TagField, {SAVED_KEYWORDS_KEY} from "./components/TagField";
-import { syncStorage } from './utils/utils';
+import {syncClearStorage} from './utils/utils';
 
 const SAVED_TABS_KEY = 'SAVED_TABS_KEY';
 const DEFAULT_TAB_ID = 0;
@@ -29,7 +29,7 @@ localStorage.getItem(SAVED_TABS_KEY)
 
         localStorage.removeItem(SAVED_KEYWORDS_KEY + id);
         setTabs(tabs.filter(item => item.id !== id));
-        syncStorage({ id });
+        syncClearStorage({ id });
     }
 
     const addNewTab = () => {

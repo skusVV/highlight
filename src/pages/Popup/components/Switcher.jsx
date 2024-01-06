@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { syncIsEnabledStorage } from '../utils/utils';
 import './switcher.css';
 
 const SAVED_IS_ENABLED_KEY = 'SAVED_IS_ENABLED_KEY';
@@ -11,11 +12,12 @@ const Switcher = () => {
 
         if(isSwitcherEnabled === 'true') {
             setIsEnabled(isSwitcherEnabled === 'true')
-            if(chrome.storage) {
-                chrome.storage.local.set({ isEnabled:  String(true) }, function() {
-                    console.log('isEnabled is set to ' + String(true));
-                });
-            }
+            syncIsEnabledStorage(true);
+            // if(chrome.storage) {
+            //     chrome.storage.local.set({ isEnabled:  String(true) }, function() {
+            //         console.log('isEnabled is set to ' + String(true));
+            //     });
+            // }
         }
     }, []);
 
@@ -23,12 +25,12 @@ const Switcher = () => {
         const isChecked = e.target.checked;
         setIsEnabled(isChecked);
         localStorage.setItem(SAVED_IS_ENABLED_KEY, String(isChecked));
-
-        if(chrome.storage) {
-            chrome.storage.local.set({ isEnabled:  String(isChecked) }, function() {
-                console.log('isEnabled is set to ' + String(isChecked));
-            });
-        }
+        syncIsEnabledStorage(isChecked);
+        // if(chrome.storage) {
+        //     chrome.storage.local.set({ isEnabled:  String(isChecked) }, function() {
+        //         console.log('isEnabled is set to ' + String(isChecked));
+        //     });
+        // }
     }
 
     return (

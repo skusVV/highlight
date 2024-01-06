@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './tag-field.css';
 import { getRandomColor } from '../colors';
-import { syncStorage } from '../utils/utils';
+import { syncDataStorage } from '../utils/utils';
 export const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
 export const IS_ACTIVE_KEY = 'IS_ACTIVE_KEY';
 export const MINIMAL_KEYWORD_LENGTH = 3;
@@ -46,7 +46,7 @@ const TagField = ({ activeTabId }) => {
         localStorage.setItem(savedKeywordsKey, JSON.stringify(newKeywords))
         setKeywords(newKeywords);
 
-        syncStorage({ keywords: newKeywords, isActive: isTabActive, id: activeTabId });
+        syncDataStorage({ keywords: newKeywords, isActive: isTabActive, id: activeTabId });
     }
 
 
@@ -88,7 +88,7 @@ const TagField = ({ activeTabId }) => {
         setIsActive(isChecked);
         localStorage.setItem(isActiveKey, String(isChecked));
 
-        syncStorage({ keywords, isActive: isChecked, id: activeTabId });
+        syncDataStorage({ keywords, isActive: isChecked, id: activeTabId });
     }
 
 
