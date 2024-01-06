@@ -1,93 +1,71 @@
 import React, { useState, useEffect } from 'react';
 import './tag-field.css';
+import { getRandomColor } from '../colors';
+import { syncStorage } from '../utils/utils';
+export const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
+export const IS_ACTIVE_KEY = 'IS_ACTIVE_KEY';
+export const MINIMAL_KEYWORD_LENGTH = 3;
 
-const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
-
-const colors = [
-    '#51ba4c',
-    '#e4a8b6',
-    '#b5faba',
-    '#ee0ab4',
-    '#908410',
-    '#31f973',
-    '#c0751e',
-    '#db5851',
-    '#d971ff',
-    '#fd0674',
-    '#c1fb04',
-    '#fb055f',
-    '#de7203',
-    '#ce540d',
-    '#a9c970',
-    '#c8511a',
-    '#4b8973',
-    '#e86b5d',
-    '#14bc88',
-    '#c20074',
-    '#d78c00',
-    '#58a658',
-    '#7fd47d',
-    '#f96642',
-    '#10dc81',
-    '#61f9de',
-    '#d1747e',
-    '#de3348',
-    '#e0c41d',
-    '#a4fdfb',
-    '#1f60e9',
-    '#3ad49e'
-];
-
-
-
-const TagField = () => {
+const TagField = ({ activeTabId }) => {
+    const savedKeywordsKey = `${SAVED_KEYWORDS_KEY}_${activeTabId}`;
+    const isActiveKey = `${IS_ACTIVE_KEY}_${activeTabId}`;
     const [keywords, setKeywords] = useState([]);
-    const [color, setColor] = useState(colors[Math.floor(Math.random()*colors.length)]);
+    const [isActive, setIsActive] = useState(true);
+    const [color, setColor] = useState(getRandomColor());
     const [value, setValue] = useState('');
 
     useEffect(() => {
         getKeywordsFromStorage();
-    }, []);
+    }, [] );
 
-    const getKeywordsFromStorage = () => {
-        if(localStorage.getItem(SAVED_KEYWORDS_KEY)) {
+    useEffect(() => {
+        setKeywords([]);
+        setColor(getRandomColor());
+        setValue('');
+        const isTabActive = localStorage.getItem(isActiveKey)
+            ? localStorage.getItem(isActiveKey) === 'true'
+            : true;
+        setIsActive(isTabActive);
+
+        getKeywordsFromStorage(isTabActive);
+    }, [ activeTabId ]);
+
+    const getKeywordsFromStorage = (isTabActive) => {
+        if(localStorage.getItem(savedKeywordsKey)) {
             try {
-                const res = JSON.parse(localStorage.getItem(SAVED_KEYWORDS_KEY));
+                const res = JSON.parse(localStorage.getItem(savedKeywordsKey));
                 if(res && res.length) {
                     setKeywords(res);
-                    saveKeywords(res);
+                    saveKeywords(res, isTabActive);
                 }
-            } catch (e) {
-
-            }
+            } catch (e) {}
         }
     }
 
-    const saveKeywords = newKeywords => {
-        localStorage.setItem(SAVED_KEYWORDS_KEY, JSON.stringify(newKeywords))
+    const saveKeywords = (newKeywords, isTabActive) => {
+        localStorage.setItem(savedKeywordsKey, JSON.stringify(newKeywords))
         setKeywords(newKeywords);
 
-        if(chrome.storage) {
-            chrome.storage.local.set({ key:  JSON.stringify(newKeywords) }, function() {
-                console.log('Value is set to ' + JSON.stringify(newKeywords));
-            });
-        }
+        syncStorage({ keywords: newKeywords, isActive: isTabActive, id: activeTabId });
     }
 
 
     const onSave = () => {
-        if(value) {
-            const alreadyExists = keywords.some(item => item.value === value);
-            if(alreadyExists) {
-                setValue('');
-                return;
-            }
-
-            const newKeywords = [{value: value.toLowerCase(), color: color}, ...keywords];
-            saveKeywords(newKeywords);
-            setValue('');
-            setColor(colors[Math.floor(Math.random()*colors.length)]);
+        if(!value || value.trim().length < MINIMAL_KEYWORD_LENGTH) {
+           return;
         }
+
+        const alreadyExists = keywords.some(item => item.value === value);
+
+        if(alreadyExists) {
+            setValue('');
+            return;
+        }
+
+        const newKeywords = [{value: value.toLowerCase().trim(), color: color}, ...keywords];
+        saveKeywords(newKeywords, isActive);
+        setValue('');
+        setColor(getRandomColor());
     }
 
     const handleKeyDown = (event) => {
@@ -98,26 +76,37 @@ const TagField = () => {
 
     const onRemove = (item) => {
         const newKeywords = keywords.filter(keyword => keyword.value !== item.value);
-        saveKeywords(newKeywords);
+        saveKeywords(newKeywords, isActive);
     }
 
     const changeColor = (e) => {
         setColor(e.target.value)
     }
+
+    const onChangeSwitch = (e) => {
+        const isChecked = e.target.checked;
+        setIsActive(isChecked);
+        localStorage.setItem(isActiveKey, String(isChecked));
+
+        syncStorage({ keywords, isActive: isChecked, id: activeTabId });
+    }
+
+
     return (
         <div className="tag-field">
-            <div className="tag-field-header">
-                <input type="color" value={color} onChange={changeColor} className="tag-field-header-color"/>
-                <input className="tag-field-header-input"
-                       type="text"
-                       value={value}
-                       onKeyDown={handleKeyDown}
-                       onChange={e => setValue(e.target.value)}/>
+            <div className="tag-field-wrapper">
+                <div className="tag-field-header">
+                    <input type="color" value={color} onChange={changeColor} className="tag-field-header-color"/>
+                    <input className="tag-field-header-input"
+                           type="text"
+                           value={value}
+                           onKeyDown={handleKeyDown}
+                           onChange={e => setValue(e.target.value)}/>
 
-                <button className="tag-field-header-button"
-                        onClick={onSave}>Save</button>
-            </div>
-            <div className="tag-field-content">
+                    <button className="tag-field-header-button"
+                            onClick={onSave}>Save</button>
+                </div>
+                <div className="tag-field-content">
                 {
                     keywords.map(item => {
                         return <div key={item.value}
@@ -130,7 +119,16 @@ const TagField = () => {
                     })
                 }
             </div>
-
+            </div>
+            <div className="tab-switcher" style={{background: 'rgb(235, 235, 235)'}}>
+                <div className="switcher-wrapper switcher-wrapper-small">
+                    <span>{isActive ? 'Disable tab' : 'Enable tab'}</span>
+                    <label className="switch switch-small">
+                        <input type="checkbox" checked={isActive} onChange={onChangeSwitch}/>
+                        <span className="slider round"></span>
+                    </label>
+                </div>
+            </div>
         </div>
     );
 };

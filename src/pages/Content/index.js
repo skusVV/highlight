@@ -1,23 +1,16 @@
 // TODO Upwork <span>Report</span>s issue.
-import { removeHighlights, removeRedundant, highlightWords } from './helpers';
+import { removeHighlights, removeRedundant, highlightWords, getFlattenAndFilteredKeywords } from './helpers';
 
-// most likely need to use set with key of tabId
-// const data = {
-//     'tab-1': {
-//         keywords: [],
-//         isExtEnabled: true
-//     },
-// }
-let keywords = [];
+const data = {};
 let isExtEnabled = true;
 
 const style = document.createElement('style');
 style.textContent = `.highlight-element-ex-243 { color: black;}`;
 document.head.appendChild(style);
 
-
 const runHighlight = () => {
     if (isExtEnabled) {
+        const keywords = getFlattenAndFilteredKeywords(data);
         highlightWords(document.body, keywords);
         removeRedundant(keywords);
     } else {
@@ -28,7 +21,11 @@ const runHighlight = () => {
 const syncDataWithPopUp = () => {
     chrome?.storage?.local?.get(['key'], function(result) {
         try {
-            keywords = JSON.parse(result.key)
+            const res = JSON.parse(result.key);
+            if(res.keywords) {
+                data[res.id] = { keywords: res.keywords, isActive: res.isActive };
+                console.log('UPDATED DATA', data);
+            }
         } catch (e) {}
     });
 
@@ -36,6 +33,14 @@ const syncDataWithPopUp = () => {
         try {
             isExtEnabled = result.isEnabled === 'true';
             runHighlight()
+        } catch (e) {}
+    });
+
+    chrome?.storage?.local?.get(['clear'], function(result) {
+        try {
+            console.log('CLEAR', result.clear.id)
+            delete data[result.clear.id];
+            console.log('DELETED data', data);
         } catch (e) {}
     });
 }

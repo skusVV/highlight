@@ -46,3 +46,15 @@ export function highlightWords(node, keywords) {
         node.childNodes.forEach(child => highlightWords(child, keywords));
     }
 }
+function flatten(arr) {
+    return arr.reduce((acc, val) => Array.isArray(val) ? acc.concat(flatten(val)) : acc.concat(val), []);
+}
+
+
+export const getFlattenAndFilteredKeywords = keywordsData => {
+    const res = Object.values(keywordsData)
+        .filter(item => item.isActive)
+        .map(item => item.keywords);
+
+    return flatten(res)
+}

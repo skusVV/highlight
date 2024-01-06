@@ -19,7 +19,6 @@ const Switcher = () => {
         }
     }, []);
 
-
     const onChangeSwitch = (e) => {
         const isChecked = e.target.checked;
         setIsEnabled(isChecked);
@@ -31,6 +30,7 @@ const Switcher = () => {
             });
         }
     }
+
     return (
         <div className="switcher-wrapper">
             <span>{isEnabled ? 'Switch off' : 'Switch on'}</span>
