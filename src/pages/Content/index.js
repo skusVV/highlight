@@ -9,7 +9,6 @@ document.head.appendChild(style);
 
 const runHighlight = () => {
     if (isExtEnabled) {
-        console.log('DATA', data);
         const keywords = getFlattenAndFilteredKeywords(data);
         highlightWords(document.body, keywords);
         removeRedundant(keywords);
