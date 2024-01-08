@@ -10,7 +10,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top:16px;
+    margin-top: 16px;
+    padding: 0 4px 0 2px;
 }
 
 .tag-field-header-input{
@@ -42,6 +43,7 @@
     margin-top: 24px;
     max-height: 390px;
     overflow: auto;
+    padding: 0 4px;
 }
 
 .tag-field-content-item {
