@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import Switcher from './components/Switcher';
 import './Popup.css';
-import TagField, {SAVED_KEYWORDS_KEY} from "./components/TagField";
-import {syncClearStorage} from './utils/utils';
+import TagField, { SAVED_KEYWORDS_KEY } from "./components/TagField";
+import {
+    getParsedValueFromStorage,
+    setStringyValueToLocalStorage,
+    syncClearStorage,
+    syncDataStorage
+} from './utils/utils';
 
 const SAVED_TABS_KEY = 'SAVED_TABS_KEY';
+const DATA_KEY = 'DATA_KEY';
 const DEFAULT_TAB_ID = 0;
 const MAX_TAB_COUNT = 5;
+// TODO REFACTOR
 
 const Popup = () => {
-    const [tabs, setTabs] = useState(
-localStorage.getItem(SAVED_TABS_KEY)
-            ? JSON.parse(localStorage.getItem(SAVED_TABS_KEY))
-            : [{ id: DEFAULT_TAB_ID }]
-    )
+    // getParsedValueFromStorage
+    const [tabs, setTabs] = useState(getParsedValueFromStorage(SAVED_TABS_KEY, [{ id: DEFAULT_TAB_ID }]))
+    // const [tabs, setTabs] = useState(localStorage.getItem(SAVED_TABS_KEY) ? JSON.parse(localStorage.getItem(SAVED_TABS_KEY)) : [{ id: DEFAULT_TAB_ID }])
     const [activeTabId, setActiveTabId] = useState(DEFAULT_TAB_ID);
+    const [data, setData] = useState(  getParsedValueFromStorage(DATA_KEY, []));
+    // const [data, setData] = useState(  localStorage.getItem(DATA_KEY) ? JSON.parse(localStorage.getItem(DATA_KEY)) : []);
 
     useEffect(() => {
         if(tabs[tabs.length-1].id !==activeTabId) {
@@ -28,8 +35,13 @@ localStorage.getItem(SAVED_TABS_KEY)
         }
 
         localStorage.removeItem(SAVED_KEYWORDS_KEY + id);
-        setTabs(tabs.filter(item => item.id !== id));
+        const newTabs = tabs.filter(item => item.id !== id);
+        setTabs(newTabs);
+        setStringyValueToLocalStorage(SAVED_TABS_KEY, newTabs);
         syncClearStorage({ id });
+        const newData = data.filter(item => item.id !== id);
+        setStringyValueToLocalStorage(DATA_KEY, newData);
+        syncDataStorage(newData);
     }
 
     const addNewTab = () => {
@@ -37,11 +49,17 @@ localStorage.getItem(SAVED_TABS_KEY)
         const newTabs = [...tabs, { id }];
         setTabs(newTabs);
         setActiveTabId(id);
-        localStorage.setItem(SAVED_TABS_KEY, JSON.stringify(newTabs));
+        setStringyValueToLocalStorage(SAVED_TABS_KEY, newTabs);
+    }
+
+    const onSyncDataStorage = tabData => {
+        const newData = [...data.filter(item => item.id !== tabData.id), tabData];
+        setStringyValueToLocalStorage(DATA_KEY, newData);
+        setData(newData);
+        syncDataStorage(newData);
     }
 
     return (
-    //    HAS TO BE WELL STYLED
     <div className="App">
         <Switcher />
         <div className="panels">
@@ -62,7 +80,7 @@ localStorage.getItem(SAVED_TABS_KEY)
             }
 
         </div>
-        <TagField activeTabId={activeTabId}/>
+        <TagField activeTabId={activeTabId} onSyncDataStorage={onSyncDataStorage}/>
     </div>
   );
 };

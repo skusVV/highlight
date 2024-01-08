@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './tag-field.css';
 import { getRandomColor } from '../colors';
-import { syncDataStorage } from '../utils/utils';
+import {getParsedValueFromStorage, setStringyValueToLocalStorage} from "../utils/utils";
 export const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
 export const IS_ACTIVE_KEY = 'IS_ACTIVE_KEY';
 export const MINIMAL_KEYWORD_LENGTH = 3;
 
-const TagField = ({ activeTabId }) => {
+const getActiveKeyStoredValue = key => localStorage.getItem(key)
+    ? localStorage.getItem(key) === 'true'
+    : true
+
+const TagField = ({ activeTabId, onSyncDataStorage }) => {
     const savedKeywordsKey = `${SAVED_KEYWORDS_KEY}_${activeTabId}`;
     const isActiveKey = `${IS_ACTIVE_KEY}_${activeTabId}`;
     const [keywords, setKeywords] = useState([]);
@@ -15,55 +19,44 @@ const TagField = ({ activeTabId }) => {
     const [value, setValue] = useState('');
 
     useEffect(() => {
-        getKeywordsFromStorage();
-    }, [] );
-
-    useEffect(() => {
         setKeywords([]);
         setColor(getRandomColor());
         setValue('');
-        const isTabActive = localStorage.getItem(isActiveKey)
-            ? localStorage.getItem(isActiveKey) === 'true'
-            : true;
-        setIsActive(isTabActive);
+        const isTabActive = getActiveKeyStoredValue(isActiveKey);
 
-        getKeywordsFromStorage(isTabActive);
+        setIsActive(isTabActive);
+        getKeywordsFromStorage();
     }, [ activeTabId ]);
 
-    const getKeywordsFromStorage = (isTabActive) => {
+    const getKeywordsFromStorage = () => {
         if(localStorage.getItem(savedKeywordsKey)) {
             try {
-                const res = JSON.parse(localStorage.getItem(savedKeywordsKey));
+                const res = getParsedValueFromStorage(savedKeywordsKey, []);
                 if(res && res.length) {
                     setKeywords(res);
-                    saveKeywords(res, isTabActive);
                 }
             } catch (e) {}
         }
     }
 
     const saveKeywords = (newKeywords, isTabActive) => {
-        localStorage.setItem(savedKeywordsKey, JSON.stringify(newKeywords))
+        setStringyValueToLocalStorage(savedKeywordsKey, newKeywords);
         setKeywords(newKeywords);
 
-        syncDataStorage({ keywords: newKeywords, isActive: isTabActive, id: activeTabId });
+        onSyncDataStorage({ keywords: newKeywords, isActive: isTabActive, id: activeTabId });
     }
-
 
     const onSave = () => {
         if(!value || value.trim().length < MINIMAL_KEYWORD_LENGTH) {
            return;
         }
 
-        const alreadyExists = keywords.some(item => item.value === value);
-
-        if(alreadyExists) {
+        if(keywords.some(item => item.value === value)) { // alreadyExists
             setValue('');
             return;
         }
 
-        const newKeywords = [{value: value.toLowerCase().trim(), color: color}, ...keywords];
-        saveKeywords(newKeywords, isActive);
+        saveKeywords([ { value: value.toLowerCase().trim(), color: color }, ...keywords], isActive);
         setValue('');
         setColor(getRandomColor());
     }
@@ -75,8 +68,7 @@ const TagField = ({ activeTabId }) => {
     }
 
     const onRemove = (item) => {
-        const newKeywords = keywords.filter(keyword => keyword.value !== item.value);
-        saveKeywords(newKeywords, isActive);
+        saveKeywords(keywords.filter(keyword => keyword.value !== item.value), isActive);
     }
 
     const changeColor = (e) => {
@@ -85,12 +77,11 @@ const TagField = ({ activeTabId }) => {
 
     const onChangeSwitch = (e) => {
         const isChecked = e.target.checked;
+
         setIsActive(isChecked);
-        localStorage.setItem(isActiveKey, String(isChecked));
-
-        syncDataStorage({ keywords, isActive: isChecked, id: activeTabId });
+        setStringyValueToLocalStorage(isActiveKey, isChecked);
+        onSyncDataStorage({ keywords, isActive: isChecked, id: activeTabId });
     }
-
 
     return (
         <div className="tag-field">

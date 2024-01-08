@@ -21,3 +21,8 @@ export const syncIsEnabledStorage = isChecked => {
         });
     }
 }
+
+export const setStringyValueToLocalStorage = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+export const getParsedValueFromStorage = (key, defaultValue) => localStorage.getItem(key)
+    ? JSON.parse(localStorage.getItem(key))
+    : defaultValue;

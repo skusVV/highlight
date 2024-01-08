@@ -1,6 +1,6 @@
 import { removeHighlights, removeRedundant, highlightWords, getFlattenAndFilteredKeywords } from './helpers';
 
-const data = {};
+let data = {};
 let isExtEnabled = true;
 
 const style = document.createElement('style');
@@ -9,6 +9,7 @@ document.head.appendChild(style);
 
 const runHighlight = () => {
     if (isExtEnabled) {
+        console.log('DATA', data);
         const keywords = getFlattenAndFilteredKeywords(data);
         highlightWords(document.body, keywords);
         removeRedundant(keywords);
@@ -21,9 +22,9 @@ const syncDataWithPopUp = () => {
     chrome?.storage?.local?.get(['key'], function(result) {
         try {
             const res = JSON.parse(result.key);
-            if(res.keywords) {
-                data[res.id] = { keywords: res.keywords, isActive: res.isActive };
-                console.log('UPDATED DATA', data);
+            if(res) {
+                data = res;
+                // data[res.id] = { keywords: res.keywords, isActive: res.isActive };
             }
         } catch (e) {}
     });
