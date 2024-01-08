@@ -1,4 +1,3 @@
-// TODO Upwork <span>Report</span>s issue.
 import { removeHighlights, removeRedundant, highlightWords, getFlattenAndFilteredKeywords } from './helpers';
 
 const data = {};
