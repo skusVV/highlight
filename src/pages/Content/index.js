@@ -23,7 +23,6 @@ const syncDataWithPopUp = () => {
             const res = JSON.parse(result.key);
             if(res) {
                 data = res;
-                // data[res.id] = { keywords: res.keywords, isActive: res.isActive };
             }
         } catch (e) {}
     });
@@ -32,19 +31,6 @@ const syncDataWithPopUp = () => {
         try {
             isExtEnabled = result.isEnabled === 'true';
             runHighlight()
-        } catch (e) {}
-    });
-
-    chrome?.storage?.local?.get(['clear'], function(result) {
-        try {
-            if(result.clear) {
-                const res = JSON.parse(result.clear);
-
-                if(res && res.id) {
-                    delete data[res.id];
-                }
-
-            }
         } catch (e) {}
     });
 }

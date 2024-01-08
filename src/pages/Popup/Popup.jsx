@@ -5,7 +5,6 @@ import TagField, { SAVED_KEYWORDS_KEY } from "./components/TagField";
 import {
     getParsedValueFromStorage,
     setStringyValueToLocalStorage,
-    syncClearStorage,
     syncDataStorage
 } from './utils/utils';
 
@@ -16,12 +15,9 @@ const MAX_TAB_COUNT = 5;
 // TODO REFACTOR
 
 const Popup = () => {
-    // getParsedValueFromStorage
     const [tabs, setTabs] = useState(getParsedValueFromStorage(SAVED_TABS_KEY, [{ id: DEFAULT_TAB_ID }]))
-    // const [tabs, setTabs] = useState(localStorage.getItem(SAVED_TABS_KEY) ? JSON.parse(localStorage.getItem(SAVED_TABS_KEY)) : [{ id: DEFAULT_TAB_ID }])
     const [activeTabId, setActiveTabId] = useState(DEFAULT_TAB_ID);
     const [data, setData] = useState(  getParsedValueFromStorage(DATA_KEY, []));
-    // const [data, setData] = useState(  localStorage.getItem(DATA_KEY) ? JSON.parse(localStorage.getItem(DATA_KEY)) : []);
 
     useEffect(() => {
         if(tabs[tabs.length-1].id !==activeTabId) {
@@ -38,7 +34,6 @@ const Popup = () => {
         const newTabs = tabs.filter(item => item.id !== id);
         setTabs(newTabs);
         setStringyValueToLocalStorage(SAVED_TABS_KEY, newTabs);
-        syncClearStorage({ id });
         const newData = data.filter(item => item.id !== id);
         setStringyValueToLocalStorage(DATA_KEY, newData);
         syncDataStorage(newData);
