@@ -34,7 +34,9 @@ const Popup = () => {
         const newTabs = tabs.filter(item => item.id !== id);
         setTabs(newTabs);
         setStringyValueToLocalStorage(SAVED_TABS_KEY, newTabs);
+
         const newData = data.filter(item => item.id !== id);
+        setData(newData);
         setStringyValueToLocalStorage(DATA_KEY, newData);
         syncDataStorage(newData);
     }

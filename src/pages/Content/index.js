@@ -7,7 +7,13 @@ const style = document.createElement('style');
 style.textContent = `.highlight-element-ex-243 { color: black;}`;
 document.head.appendChild(style);
 
+const blacklist = ['www.google.com'];
+
 const runHighlight = () => {
+    if(blacklist.includes(window.location.host)) {
+        return
+    }
+
     if (isExtEnabled) {
         const keywords = getFlattenAndFilteredKeywords(data);
         highlightWords(document.body, keywords);
