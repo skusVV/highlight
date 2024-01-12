@@ -8,6 +8,8 @@ export function removeHighlights() {
     });
 }
 
+let index = 0;
+
 export function isAlreadyHighlighted(node) {
     return node.parentNode.className === 'highlight-element-ex-243';
 }
@@ -24,7 +26,7 @@ export function removeRedundant(keywords) {
 }
 
 export function highlightWords(node, keywords) {
-    if (node.nodeType === 3 && !isAlreadyHighlighted(node) && node.tagName !== 'STYLE') { // Text node
+    if (node.nodeType === 3 && !isAlreadyHighlighted(node) && node.tagName !== 'STYLE' && index < 50000) { // Text node
         let text = node.nodeValue;
         let replacedText = text;
         let color = 'yellow';
@@ -40,9 +42,13 @@ export function highlightWords(node, keywords) {
         if (replacedText !== text) {
             let newNode = document.createElement('span');
             newNode.innerHTML = replacedText;
+            if(node.parentNode.getAttribute('data-artdeco-toggle-label-hidden') === 'true' || window.getComputedStyle(node.parentNode).overflow === 'hidden') {
+                return;
+            }
             node.parentNode.replaceChild(newNode, node);
+            index++;
         }
-    } else if (node.nodeType === 1 && node.tagName !== 'STYLE') { // Element node
+    } else if (node.nodeType === 1 && node.tagName !== 'STYLE' && node.tagName !== 'CODE') { // Element node
         node.childNodes.forEach(child => highlightWords(child, keywords));
     }
 }

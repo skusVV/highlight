@@ -10,16 +10,20 @@ document.head.appendChild(style);
 const blacklist = ['www.google.com'];
 
 const runHighlight = () => {
-    if(blacklist.includes(window.location.host)) {
-        return
-    }
+    try {
+        if(blacklist.includes(window.location.host)) {
+            return
+        }
 
-    if (isExtEnabled) {
-        const keywords = getFlattenAndFilteredKeywords(data);
-        highlightWords(document.body, keywords);
-        removeRedundant(keywords);
-    } else {
-        removeHighlights();
+        if (isExtEnabled) {
+            const keywords = getFlattenAndFilteredKeywords(data);
+            highlightWords(document.body, keywords);
+            removeRedundant(keywords);
+        } else {
+            removeHighlights();
+        }
+    } catch (e) {
+        console.log('Hans Highlight: ', e)
     }
 }
 

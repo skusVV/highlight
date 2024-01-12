@@ -4,7 +4,7 @@ import { getRandomColor } from '../colors';
 import { getParsedValueFromStorage, setStringyValueToLocalStorage } from '../utils/utils';
 export const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
 export const IS_ACTIVE_KEY = 'IS_ACTIVE_KEY';
-export const MINIMAL_KEYWORD_LENGTH = 3;
+export const MINIMAL_KEYWORD_LENGTH = 2;
 
 const getActiveKeyStoredValue = key => localStorage.getItem(key)
     ? localStorage.getItem(key) === 'true'
