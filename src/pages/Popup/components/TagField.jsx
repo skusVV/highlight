@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './tag-field.css';
 import { getRandomColor } from '../colors';
-import {getParsedValueFromStorage, setStringyValueToLocalStorage} from "../utils/utils";
+import { getParsedValueFromStorage, setStringyValueToLocalStorage } from '../utils/utils';
 export const SAVED_KEYWORDS_KEY = 'SAVED_KEYWORDS_KEY';
 export const IS_ACTIVE_KEY = 'IS_ACTIVE_KEY';
 export const MINIMAL_KEYWORD_LENGTH = 3;
@@ -51,12 +51,13 @@ const TagField = ({ activeTabId, onSyncDataStorage }) => {
            return;
         }
 
-        if(keywords.some(item => item.value === value)) { // alreadyExists
+        if(keywords.some(item => item.value.toLowerCase().trim() === value.toLowerCase().trim())) { // alreadyExists
             setValue('');
             return;
         }
 
-        saveKeywords([ { value: value.toLowerCase().trim(), color: color }, ...keywords], isActive);
+
+        saveKeywords([ { value: value.toLowerCase().trim(), color: color, id: Math.random() }, ...keywords], isActive);
         setValue('');
         setColor(getRandomColor());
     }
@@ -68,7 +69,7 @@ const TagField = ({ activeTabId, onSyncDataStorage }) => {
     }
 
     const onRemove = (item) => {
-        saveKeywords(keywords.filter(keyword => keyword.value !== item.value), isActive);
+        saveKeywords(keywords.filter(keyword => keyword.id !== item.id), isActive);
     }
 
     const changeColor = (e) => {
