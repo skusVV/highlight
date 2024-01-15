@@ -1,6 +1,6 @@
 .tag-field {
     width: 100%;
-    height: 510px;
+    height: 490px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -24,6 +24,15 @@
     margin: 0 8px;
 }
 
+.tag-field-header-label-name {
+    margin-left: 4px;
+}
+
+.tag-field-header-input-name {
+    margin-top: 12px;
+    width: 85%;
+}
+
 .tag-field-header-button {
     background: #2196F3;
     color: #fff;
@@ -41,7 +50,7 @@
     justify-content: flex-start;
     flex-wrap: wrap;
     margin-top: 24px;
-    max-height: 390px;
+    max-height: 325px;
     overflow: auto;
     padding: 0 4px;
 }

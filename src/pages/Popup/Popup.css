@@ -1,5 +1,6 @@
 .panels {
     display: flex;
+    flex-wrap: wrap;
     /*background: rgba(248,248,248, 1);*/
 }
 
@@ -31,6 +32,10 @@
 }
 .tab-item-name {
     margin-right: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 100px;
 }
 
 .tab-item-close {

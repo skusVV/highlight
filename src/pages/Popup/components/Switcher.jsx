@@ -13,11 +13,6 @@ const Switcher = () => {
         if(isSwitcherEnabled === 'true') {
             setIsEnabled(isSwitcherEnabled === 'true')
             syncIsEnabledStorage(true);
-            // if(chrome.storage) {
-            //     chrome.storage.local.set({ isEnabled:  String(true) }, function() {
-            //         console.log('isEnabled is set to ' + String(true));
-            //     });
-            // }
         }
     }, []);
 
@@ -26,11 +21,6 @@ const Switcher = () => {
         setIsEnabled(isChecked);
         localStorage.setItem(SAVED_IS_ENABLED_KEY, String(isChecked));
         syncIsEnabledStorage(isChecked);
-        // if(chrome.storage) {
-        //     chrome.storage.local.set({ isEnabled:  String(isChecked) }, function() {
-        //         console.log('isEnabled is set to ' + String(isChecked));
-        //     });
-        // }
     }
 
     return (

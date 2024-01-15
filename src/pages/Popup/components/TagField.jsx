@@ -10,7 +10,7 @@ const getActiveKeyStoredValue = key => localStorage.getItem(key)
     ? localStorage.getItem(key) === 'true'
     : true
 
-const TagField = ({ activeTabId, onSyncDataStorage }) => {
+const TagField = ({ activeTabId, onSyncDataStorage, tabName, onTabNameChange }) => {
     const savedKeywordsKey = `${SAVED_KEYWORDS_KEY}_${activeTabId}`;
     const isActiveKey = `${IS_ACTIVE_KEY}_${activeTabId}`;
     const [keywords, setKeywords] = useState([]);
@@ -87,6 +87,11 @@ const TagField = ({ activeTabId, onSyncDataStorage }) => {
     return (
         <div className="tag-field">
             <div className="tag-field-wrapper">
+                <label className="tag-field-header-label-name">Name:</label>
+                <input className="tag-field-header-input tag-field-header-input-name"
+                       type="text"
+                       value={tabName}
+                       onChange={e => onTabNameChange(e.target.value, activeTabId)}/>
                 <div className="tag-field-header">
                     <input type="color" value={color} onChange={changeColor} className="tag-field-header-color"/>
                     <input className="tag-field-header-input"
