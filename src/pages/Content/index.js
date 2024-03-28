@@ -2,6 +2,7 @@ import { removeHighlights, removeRedundant, highlightWords, getFlattenAndFiltere
 
 let data = {};
 let isExtEnabled = true;
+let visibilityStatus = true;
 
 const style = document.createElement('style');
 style.textContent = `.highlight-element-ex-243 { color: black;}`;
@@ -11,8 +12,8 @@ const blacklist = ['www.google.com'];
 
 const runHighlight = () => {
     try {
-        if(blacklist.includes(window.location.host)) {
-            return
+        if(blacklist.includes(window.location.host) || !visibilityStatus) {
+            return;
         }
 
         if (isExtEnabled) {
@@ -23,7 +24,7 @@ const runHighlight = () => {
             removeHighlights();
         }
     } catch (e) {
-        console.log('Hans Highlight: ', e)
+        // console.log('Hans Highlight: ', e)
     }
 }
 
@@ -46,16 +47,11 @@ const syncDataWithPopUp = () => {
 }
 
 let storageInterval;
-let runHighlightInterval;
 
 const init = () => {
     storageInterval = setInterval(() => {
-        syncDataWithPopUp();
-    }, 1000);
-
-    runHighlightInterval = setInterval(() => {
-        runHighlight();
-    }, 3000);
+        syncDataWithPopUp(); // it will run runHighlight
+    }, 2000);
 }
 init();
 
@@ -66,10 +62,11 @@ function handleVisibilityChange() {
             syncDataWithPopUp()
             runHighlight();
         }, 500);
+        visibilityStatus = true;
         init();
     } else {
+        visibilityStatus = false;
         clearInterval(storageInterval);
-        clearInterval(runHighlightInterval);
     }
 }
 document.addEventListener("visibilitychange", handleVisibilityChange);

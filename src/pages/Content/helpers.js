@@ -25,14 +25,19 @@ export function removeRedundant(keywords) {
     });
 }
 
+function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');  // $& means the whole matched string
+}
+
 export function highlightWords(node, keywords) {
+    // console.log('node attribute', node.isContentEditable)
     if (node.nodeType === 3 && !isAlreadyHighlighted(node) && node.tagName !== 'STYLE' && index < 50000) { // Text node
         let text = node.nodeValue;
         let replacedText = text;
         let color = 'yellow';
 
         keywords.forEach(keyword => {
-            const regex = new RegExp(keyword.value, 'gi');
+            const regex = new RegExp(escapeRegExp(keyword.value), 'gi');
             color = keyword.color;
             replacedText = replacedText.replace(regex, (match) => {
                 return `<span class="highlight-element-ex-243" style="background-color: ${color}">${match}</span>`;
@@ -48,7 +53,7 @@ export function highlightWords(node, keywords) {
             node.parentNode.replaceChild(newNode, node);
             index++;
         }
-    } else if (node.nodeType === 1 && node.tagName !== 'STYLE' && node.tagName !== 'CODE') { // Element node
+    } else if (node.nodeType === 1 && node.tagName !== 'STYLE' && node.tagName !== 'CODE' && !node.isContentEditable) { // Element node
         node.childNodes.forEach(child => highlightWords(child, keywords));
     }
 }

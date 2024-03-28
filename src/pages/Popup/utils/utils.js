@@ -9,7 +9,7 @@ export const syncDataStorage = (data) => {
 export const syncIsEnabledStorage = isChecked => {
     if(chrome.storage) {
         chrome.storage.local.set({ isEnabled:  String(isChecked) }, function() {
-            console.log('isEnabled is set to ' + String(true));
+            console.log('isEnabled is set to ' + String(isChecked));
         });
     }
 }

@@ -1,0 +1,56 @@
+[
+  {
+    "keywords": [
+      {
+        "value": "write article",
+        "color": "#c71585"
+      },
+      {
+        "value": "event",
+        "color": "#c6b9f0"
+      },
+      {
+        "value": "media",
+        "color": "#cb9cf2"
+      }
+    ],
+    "isActive": true,
+    "id": 0.9611950046131466
+  },
+  {
+    "keywords": [
+      {
+        "value": "my network",
+        "color": "#add8e6"
+      },
+      {
+        "value": "home",
+        "color": "#e4a8b6"
+      }
+    ],
+    "isActive": true,
+    "id": 0.04700154038252102
+  },
+  {
+    "keywords": [
+      {
+        "value": "work",
+        "color": "#14bc88"
+      },
+      {
+        "value": "repo",
+        "color": "#de3348"
+      },
+      {
+        "value": "job",
+        "color": "#f7a8a6"
+      }
+    ],
+    "isActive": true,
+    "id": 0.5202425272983702
+  },
+  {
+    "keywords": [],
+    "isActive": true,
+    "id": 0.6848761656565387
+  },
